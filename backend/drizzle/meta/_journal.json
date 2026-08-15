@@ -8,6 +8,13 @@
       "when": 1786696841133,
       "tag": "0000_woozy_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786776597596,
+      "tag": "0001_broad_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }
