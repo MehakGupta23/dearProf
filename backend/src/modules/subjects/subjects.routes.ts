@@ -24,8 +24,15 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   const result = createSubjectSchema.safeParse(req.body);
   if (!result.success) return res.status(400).json({ errors: result.error.issues });
-  const created = await createSubject(result.data);
-  res.status(201).json(created);
+  try {
+    const created = await createSubject(result.data);
+    res.status(201).json(created);
+  } catch (err: any) {
+    if (err?.cause?.code === '23505') {
+      return res.status(409).json({ error: 'A subject with this code already exists' });
+    }
+    throw err;
+  }
 });
 
 export default router;
