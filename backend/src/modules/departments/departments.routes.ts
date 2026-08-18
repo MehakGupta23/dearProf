@@ -22,8 +22,16 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   const parsed = createDepartmentSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.issues });
-  const created = await createDepartment(parsed.data);
-  res.status(201).json(created);
+  
+  try {
+    const created = await createDepartment(parsed.data);
+    res.status(201).json(created);
+  } catch (err: any) {
+    if (err?.cause?.code === '23505') {
+      return res.status(409).json({ error: 'A department with this code already exists' });
+    }
+    throw err;
+  }
 });
 
 export default router;
