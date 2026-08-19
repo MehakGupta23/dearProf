@@ -4,6 +4,8 @@ import enrollmentsRoutes from '../modules/enrollments/enrollments.routes';
 import termsRoutes from '../modules/terms/terms.routes';
 import departmentsRoutes from '../modules/departments/departments.routes';
 import resourcesRoutes from '../modules/resources/resources.routes';
+import announcementsRoutes from '../modules/announcements/announcements.routes';
+
 const router = Router();
 
 router.use('/subjects', subjectsRoutes);
@@ -11,5 +13,6 @@ router.use('/enrollments', enrollmentsRoutes);
 router.use('/terms', termsRoutes);
 router.use('/departments', departmentsRoutes);
 router.use('/resources', resourcesRoutes)
+router.use('/announcements', announcementsRoutes);
 
 export default router;
