@@ -6,6 +6,7 @@ import departmentsRoutes from '../modules/departments/departments.routes';
 import resourcesRoutes from '../modules/resources/resources.routes';
 import announcementsRoutes from '../modules/announcements/announcements.routes';
 import notificationsRoutes from '../modules/notifications/notifications.routes'
+import usersRoutes from '../modules/users/users.routes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/departments', departmentsRoutes);
 router.use('/resources', resourcesRoutes)
 router.use('/announcements', announcementsRoutes);
 router.use('/notifications', notificationsRoutes);
+router.use('/users', usersRoutes);
 
 export default router;
