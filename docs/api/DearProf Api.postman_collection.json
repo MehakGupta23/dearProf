@@ -1,0 +1,742 @@
+{
+  "info": {
+    "_postman_id": "b11f4ccd-18cd-4e21-bb86-e93c163c8365",
+    "name": "DearProf Api",
+    "description": "API testing of DearProf website.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46793726",
+    "_collection_link": "https://go.postman.co/collection/46793726-b11f4ccd-18cd-4e21-bb86-e93c163c8365?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "subjects",
+      "item": [
+        {
+          "name": "post_subjects",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  { \"name\": \"Digital Signal Processing\", \"code\": \"EC301\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            },
+            "description": "\\-> Creates a new subject. Confirms Zod validation and the  \nDrizzle insert both work.  \nExpected: `201`, returns the created row including its generated `id`.\n\n\\-> _Attempts of creating a duplicate —_ `_code_` _has a unique  \nconstraint in the schema. Confirms the 23505 duplicate-key handling  \nreturns a clean error instead of a raw 500._  \nExpected: `409`, `{\"error\": \"A subject with this code already exists\"}`."
+          },
+          "response": []
+        },
+        {
+          "name": "get_subjects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/subjects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subjects"
+              ]
+            },
+            "description": "Description: Fetches every subject in the catalog, unfiltered.  \nConfirms the basic read path works end to end.  \nExpected: `200`, `[]` (empty array — table has no rows yet)."
+          },
+          "response": []
+        },
+        {
+          "name": "get_subject_given_id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  { \"name\": \"Digital Signal Processing\", \"code\": \"EC301\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subjects/c1afb5da-5ebe-4e61-9cb0-1b3fce2f94b2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subjects",
+                "c1afb5da-5ebe-4e61-9cb0-1b3fce2f94b2"
+              ]
+            },
+            "description": "Fetches a single subject by id.  \nExpected: `200`, that one subject's data."
+          },
+          "response": []
+        },
+        {
+          "name": "get_subject_not_found",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  { \"name\": \"Digital Signal Processing\", \"code\": \"EC301\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subjects/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subjects",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            },
+            "description": "Fetches a subject id that doesn't exist. Confirms the  \n404 branch works, not just the happy path.  \nExpected: `404`, `{\"error\": \"Subject not found\"}`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "departments",
+      "item": [
+        {
+          "name": "get_department",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "  { \"name\": \"Digital Signal Processing\", \"code\": \"EC301\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/departments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_department",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Digital Signal Processing\",\r\n    \"code\": \"ECE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/departments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "departments"
+              ]
+            },
+            "description": "_Same shape as subjects — basic create._  \nExpected: `201.`"
+          },
+          "response": []
+        },
+        {
+          "name": "get_department_id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Digital Signal Processing\",\r\n    \"code\": \"EC301\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/departments/284abd35-19ea-43ad-bb02-d49c21729d28",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "departments",
+                "284abd35-19ea-43ad-bb02-d49c21729d28"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_department_id_not_found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/departments/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "departments",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "terms",
+      "item": [
+        {
+          "name": "get_term",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Digital Signal Processing\",\r\n    \"code\": \"ECE\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terms"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_term",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"2026-27 Odd\", \"startDate\": \"2026-07-01\", \"endDate\": \"2026-12-31\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terms"
+              ]
+            },
+            "description": "_Creates a new academic term. Does NOT automatically  \nmake it current — that's a separate, deliberate action._  \nExpected: `201`"
+          },
+          "response": [
+            {
+              "name": "post_term",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"name\": \"2026-27 Odd\", \"startDate\": \"2026-07-01\", \"endDate\": \"2026-12-31\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/terms",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "terms"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "132"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"84-wAU9D7ivEREiLMsxPfejAcEJCQA\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Wed, 19 Aug 2026 22:04:41 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"71778571-8dba-4161-991e-3a1d0aacd903\",\n    \"name\": \"2026-27 Odd\",\n    \"startDate\": \"2026-07-01\",\n    \"endDate\": \"2026-12-31\",\n    \"isCurrent\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "get_term_current",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"2026-27 Odd\", \"startDate\": \"2026-07-01\", \"endDate\": \"2026-12-31\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terms/current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terms",
+                "current"
+              ]
+            },
+            "description": "_\\-> Checks which term is currently active. Since nothing's  \nbeen set current yet, this should still fail cleanly._  \nExpected: `404`, `{\"error\": \"No current term is set\"}`\n\n\\-> _Confirms the transaction of patch_set_current_term actually took effect._  \nExpected: `200`, returns the term just set current"
+          },
+          "response": []
+        },
+        {
+          "name": "patch_set_current_term",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"2026-27 Odd\", \"startDate\": \"2026-07-01\", \"endDate\": \"2026-12-31\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terms/6d35334e-de1e-4885-8b1f-36a5271a6ca9/set-current",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terms",
+                "6d35334e-de1e-4885-8b1f-36a5271a6ca9",
+                "set-current"
+              ]
+            },
+            "description": "_The actual action that flips this term to current —  \nruns inside a database transaction so there's never a moment with  \nzero current terms._  \nExpected: `200`, the term with `isCurrent: true`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "enrollments",
+      "item": [
+        {
+          "name": "get_students_enrollments",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"2026-27 Odd\", \"startDate\": \"2026-07-01\", \"endDate\": \"2026-12-31\" }"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/enrollments/student/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "enrollments",
+                "student",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            },
+            "description": "_Fetches a student's current-term enrollments — this  \nquery joins against_ `_academicTerms_` _to filter to only the current  \nterm. Fake id, so expect nothing, but confirms the join query itself  \ndoesn't error._  \nExpected: `200`, `[]`"
+          },
+          "response": []
+        },
+        {
+          "name": "post_enrollment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/enrollments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "enrollments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "resources",
+      "item": [
+        {
+          "name": "get_files_subject_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resources/subject/<real subject id>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resources",
+                "subject",
+                "<real subject id>"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_resrouces_url",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/resources/upload-url",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resources",
+                "upload-url"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"subjectId\": \"<real subject id>\", \"uploadedBy\": \"<real user id>\", \"title\": \"Test Notes\", \"fileUrl\": \"<the path from the upload-url response>\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resources",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resources"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "announcements",
+      "item": [
+        {
+          "name": "get_announcement_of_sub_given_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/announcements/subject/<real subject id>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "announcements",
+                "subject",
+                "<real subject id>"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_announcement_of_dept_given_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/announcements/general/<real department id>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "announcements",
+                "general",
+                "<real department id>"
+              ]
+            },
+            "description": "_\\-> The \"General\" tile — department-wide announcements  \nwhere_ `_subjectId_` _is null._  \nExpected: `200`, `[].`  \n\n_\\-> Confirms the general announcement just created is  \nactually retrievable through the general-announcements query, not  \njust sitting in the table._  \nExpected: `200`, array containing the one just created."
+          },
+          "response": []
+        },
+        {
+          "name": "post_announcements",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"subjectId\": \"<real subject id>\", \"title\": \"Test\", \"body\": \"Testing course announcement\", \"postedBy\": \"<real user id>\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/announcements",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "announcements"
+              ]
+            },
+            "description": "_\\->Course-specific announcement._  \nExpected: `201.`\n\n\\->StartFragment_Same endpoint, but omitting_ `_subjectId_` _— this is what  \nactually makes it a General/department announcement instead of a  \ncourse one. Confirms the_ `_isNull()_` _read-side logic matches this  \nwrite-side behavior._  \nExpected: `201`, `subjectId` should be `null` in the responseEndFragment"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "get_all_notif_given_user_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            },
+            "description": "Fetches all notifications for a user. Fake id, so expect an empty result — confirms the basic read path works before testing the real query logic."
+          },
+          "response": []
+        },
+        {
+          "name": "get_recent_notif_only_user_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/00000000-0000-0000-0000-000000000000/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "00000000-0000-0000-0000-000000000000",
+                "unread-count"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "patch_notif_read",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/00000000-0000-0000-0000-000000000000/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "00000000-0000-0000-0000-000000000000",
+                "read"
+              ]
+            },
+            "description": "Marks a notification read. Will 404 until a real  \nnotification row exists — fine to skip for now, comes back once  \nother modules actually create some."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "fetch_users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_new_user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"mehakfzr23@gmail.com\", \"fullName\": \"Test2 Professor\", \"role\": \"professor\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "fetch_users_given_id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/<id from the POST response>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "<id from the POST response>"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    }
+  ]
+}
