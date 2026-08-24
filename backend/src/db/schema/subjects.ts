@@ -5,5 +5,5 @@ export const subjects = pgTable('subjects', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   code: text('code').unique(),
-  departmentId: uuid('department_id').references(() => departments.id),
+  departmentId: uuid('department_id').notNull().references(() => departments.id),
 });

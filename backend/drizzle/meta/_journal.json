@@ -15,6 +15,13 @@
       "when": 1786776597596,
       "tag": "0001_broad_ma_gnuci",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787603377664,
+      "tag": "0002_fair_centennial",
+      "breakpoints": true
     }
   ]
 }

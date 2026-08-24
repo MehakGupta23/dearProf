@@ -7,7 +7,7 @@ const router = Router();
 const createSubjectSchema = z.object({
   name: z.string().min(1),
   code: z.string().optional(),
-  departmentId: z.string().uuid().optional(),
+  departmentId: z.string().uuid()
 });
 
 router.get('/', async (req, res) => {

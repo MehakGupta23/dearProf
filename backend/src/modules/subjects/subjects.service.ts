@@ -11,7 +11,7 @@ export async function getSubjectById(id: string) {
   return subject;
 }
 
-export async function createSubject(data: { name: string; code?: string; departmentId?: string }) {
+export async function createSubject(data: { name: string; code?: string; departmentId: string }) {
   const [created] = await db.insert(subjects).values(data).returning();
   return created;
 }
