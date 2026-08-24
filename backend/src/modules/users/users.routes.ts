@@ -1,14 +1,16 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { getAllUsers, getUserById, createUser } from './users.service';
+import { auth } from '../../middleware/auth';
+import { requireRole } from '../../middleware/requireRole';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', auth, requireRole('admin'), async (req, res) => {
   res.json(await getAllUsers());
 });
 
-router.get('/:id', async (req, res) => {
+router.get<{ id:string }>('/:id', auth, async (req, res) => {
   const user = await getUserById(req.params.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
@@ -24,7 +26,7 @@ const createUserSchema = z.object({
   admissionYear: z.number().int().optional(),
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   const parsed = createUserSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.issues });
 
