@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { getAllUsers, getUserById, createUser } from './users.service';
+import { getAllUsers, getUserById, createUser, bulkCreateStudents } from './users.service';
 import { auth } from '../../middleware/auth';
 import { requireRole } from '../../middleware/requireRole';
+import multer from 'multer';
 
+const upload = multer({ dest: 'uploads/' });
 const router = Router();
 
 router.get('/', auth, requireRole('admin'), async (req, res) => {
@@ -39,6 +41,21 @@ router.post('/', auth, async (req, res) => {
     }
     throw err;
   }
+});
+
+const bulkImportSchema = z.object({
+  departmentId: z.string().uuid(),
+  admissionYear: z.coerce.number().int(),
+});
+
+router.post('/bulk-import', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No CSV file uploaded' });
+
+  const parsed = bulkImportSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ errors: parsed.error.issues });
+
+  const result = await bulkCreateStudents(req.file.buffer, parsed.data.departmentId, parsed.data.admissionYear);
+  res.status(200).json(result);
 });
 
 export default router;
