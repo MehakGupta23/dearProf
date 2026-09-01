@@ -21,3 +21,14 @@ export async function getUserById(id: string): Promise<User | null> {
   if (!res.ok) throw new Error(`Failed to fetch user ${id}: ${res.status}`);
   return res.json();
 }
+
+export interface NotificationCount {
+  count: number;
+}
+
+export async function getUnreadNotificationCount(userId: string): Promise<number> {
+  const res = await fetch(`${API_BASE_URL}/notifications/user/${userId}/unread-count`);
+  if (!res.ok) throw new Error(`Failed to fetch unread count: ${res.status}`);
+  const data: NotificationCount = await res.json();
+  return data.count;
+}
