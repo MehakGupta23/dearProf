@@ -1,0 +1,9 @@
+.master-detail { display: flex; gap: 24px; }
+.master-detail-list { flex: 0 0 280px; }
+.master-detail-detail { flex: 1; }
+
+@media (max-width: 767px) {
+  .master-detail { display: block; }
+  .master-detail.list-active .master-detail-detail { display: none; }
+  .master-detail.detail-active .master-detail-list { display: none; }
+}
