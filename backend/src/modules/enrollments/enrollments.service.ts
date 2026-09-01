@@ -3,8 +3,7 @@ import { enrollments, academicTerms } from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 export async function getEnrollmentsForStudent(studentId: string) {
-  return db
-    .select({
+  return db.select({
       id: enrollments.id,
       subjectId: enrollments.subjectId,
       termId: enrollments.termId,
