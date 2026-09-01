@@ -8,3 +8,11 @@ export async function createSignedUploadUrl(subjectId: string, fileName: string)
   if (error) throw error;
   return { path, uploadUrl: data.signedUrl, token: data.token };
 }
+
+export async function createSignedDownloadUrl(path: string) {
+  const { data, error } = await supabase.storage
+    .from('resources')
+    .createSignedUrl(path, 60 * 5); // 5 min expiry
+  if (error) throw error;
+  return data.signedUrl;
+}

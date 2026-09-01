@@ -29,3 +29,8 @@ export async function createResourceRecord(data: { subjectId: string; uploadedBy
 
   return created;
 }
+
+export async function getResourceById(id: string) {
+  const [resource] = await db.select().from(resources).where(eq(resources.id, id));
+  return resource ?? null;
+}

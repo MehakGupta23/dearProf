@@ -7,7 +7,7 @@ import resourcesRoutes from '../modules/resources/resources.routes';
 import announcementsRoutes from '../modules/announcements/announcements.routes';
 import notificationsRoutes from '../modules/notifications/notifications.routes';
 import usersRoutes from '../modules/users/users.routes';
-import teachingAssignmentsRoutes from '../modules/teaching-assignments/teaching-assignments.routes';
+import teachingAssignmentsRoutes from '../modules/admin/teaching-assignments.routes';
 
 const router = Router();
 
