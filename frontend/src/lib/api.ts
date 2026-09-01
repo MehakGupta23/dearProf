@@ -141,3 +141,58 @@ export async function createAnnouncement(data: {
   }
   return res.json();
 }
+
+export interface Department { id: string; name: string; code: string | null; }
+
+export async function getDepartments(): Promise<Department[]> {
+  const res = await fetch(`${API_BASE_URL}/departments`);
+  if (!res.ok) throw new Error(`Failed to fetch departments: ${res.status}`);
+  return res.json();
+}
+
+export async function createDepartment(data: { name: string; code?: string }): Promise<Department> {
+  const res = await fetch(`${API_BASE_URL}/departments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (res.status === 409) throw new Error('A department with that code already exists.');
+  if (!res.ok) throw new Error(`Failed to create department: ${res.status}`);
+  return res.json();
+}
+
+export async function createSubject(data: { name: string; code?: string; departmentId?: string }): Promise<Subject> {
+  const res = await fetch(`${API_BASE_URL}/subjects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (res.status === 409) throw new Error('A subject with that code already exists.');
+  if (!res.ok) throw new Error(`Failed to create subject: ${res.status}`);
+  return res.json();
+}
+
+export interface Term { id: string; name: string; startDate: string | null; endDate: string | null; isCurrent: boolean; }
+
+export async function getTerms(): Promise<Term[]> {
+  const res = await fetch(`${API_BASE_URL}/terms`);
+  if (!res.ok) throw new Error(`Failed to fetch terms: ${res.status}`);
+  return res.json();
+}
+
+export async function createTerm(data: { name: string; startDate?: string; endDate?: string }): Promise<Term> {
+  const res = await fetch(`${API_BASE_URL}/terms`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Failed to create term: ${res.status}`);
+  return res.json();
+}
+
+export async function setCurrentTerm(id: string): Promise<Term> {
+  const res = await fetch(`${API_BASE_URL}/terms/${id}/set-current`, { method: 'PATCH' });
+  if (!res.ok) throw new Error(`Failed to set current term: ${res.status}`);
+  return res.json();
+}
+

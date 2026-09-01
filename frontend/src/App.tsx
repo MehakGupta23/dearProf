@@ -6,6 +6,9 @@ import { ResourceDetail } from "./pages/resources/ResourceDetail";
 import { Announcements } from "./pages/announcements/Announcements";
 import { AnnouncementDetail } from "./pages/announcements/AnnouncementDetail";
 import { GeneralAnnouncements } from "./pages/announcements/GeneralAnnouncements";
+import { Departments } from "./pages/admin/Departments";
+import { Subjects } from "./pages/admin/Subjects";
+import { Terms } from "./pages/admin/Terms";
 
 function App() {
   return (
@@ -39,6 +42,9 @@ function App() {
           <Route path="general" element={<GeneralAnnouncements />} />
           <Route path=":subjectId" element={<AnnouncementDetail />} />
         </Route>
+        <Route path="/admin/departments" element={<Departments />} />
+        <Route path="/admin/subjects" element={<Subjects />} />
+        <Route path="/admin/terms" element={<Terms />} />
       </Route>
     </Routes>
   );
