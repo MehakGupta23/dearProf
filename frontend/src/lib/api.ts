@@ -61,3 +61,32 @@ export async function getResourcesBySubject(subjectId: string): Promise<Resource
   if (!res.ok) throw new Error(`Failed to fetch resources: ${res.status}`);
   return res.json();
 }
+
+export async function getResourceUploadUrl(subjectId: string, fileName: string) {
+  const res = await fetch(`${API_BASE_URL}/resources/upload-url`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ subjectId, fileName }),
+  });
+  if (!res.ok) throw new Error(`Failed to get upload URL: ${res.status}`);
+  return res.json() as Promise<{ path: string; uploadUrl: string; token: string }>;
+}
+
+export async function saveResourceMetadata(data: {
+  subjectId: string; uploadedBy: string; title: string; fileUrl: string;
+}): Promise<Resource> {
+  const res = await fetch(`${API_BASE_URL}/resources`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`Failed to save resource: ${res.status}`);
+  return res.json();
+}
+
+export async function getResourceDownloadUrl(resourceId: string): Promise<string> {
+  const res = await fetch(`${API_BASE_URL}/resources/${resourceId}/download-url`);
+  if (!res.ok) throw new Error(`Failed to get download URL: ${res.status}`);
+  const data = await res.json();
+  return data.url;
+}
