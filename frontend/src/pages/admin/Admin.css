@@ -17,3 +17,18 @@
 .admin-table th { text-align: left; padding: 10px 12px; color: var(--ink-60); font-weight: 500; border-bottom: 1px solid var(--ink-15); }
 .admin-table td { padding: 10px 12px; border-bottom: 1px solid var(--ink-15); }
 .admin-table button { padding: 5px 12px; font-size: 13px; background: var(--surface); color: var(--navy); border: 1px solid var(--ink-15); }
+.admin-select-standalone { margin-bottom: 16px; padding: 9px 10px; border: 1px solid var(--ink-15); border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 14px; }
+.import-result { margin-bottom: 20px; font-size: 14px; }
+.import-result ul { margin-top: 8px; color: var(--ink-60); padding-left: 18px; }
+
+.detail-list { display: grid; grid-template-columns: 140px 1fr; row-gap: 10px; font-size: 14px; max-width: 400px; }
+.detail-list dt { color: var(--ink-60); }
+.detail-list dd { color: var(--ink); }
+
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 20px; }
+.dashboard-card {
+  display: block; padding: 20px; border: 1px solid var(--ink-15); border-radius: 8px;
+  background: var(--surface); color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 500;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.dashboard-card:hover { border-color: var(--navy); background: var(--navy-08); }

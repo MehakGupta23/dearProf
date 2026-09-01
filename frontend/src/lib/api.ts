@@ -196,3 +196,64 @@ export async function setCurrentTerm(id: string): Promise<Term> {
   return res.json();
 }
 
+export async function getUsers(): Promise<User[]> {
+  const res = await fetch(`${API_BASE_URL}/users`);
+  if (!res.ok) throw new Error(`Failed to fetch users: ${res.status}`);
+  return res.json();
+}
+
+export async function createTeachingAssignment(data: {
+  professorId: string; subjectId: string; termId: string;
+}): Promise<Assignment> {
+  const res = await fetch(`${API_BASE_URL}/teaching-assignments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (res.status === 409) throw new Error('This subject already has a professor for that term, or this exact assignment already exists.');
+  if (!res.ok) throw new Error(`Failed to create assignment: ${res.status}`);
+  return res.json();
+}
+
+export async function createEnrollment(data: { studentId: string; subjectId: string; termId: string }): Promise<Enrollment> {
+  const res = await fetch(`${API_BASE_URL}/enrollments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (res.status === 409) throw new Error('This student is already enrolled in that subject for that term.');
+  if (!res.ok) throw new Error(`Failed to create enrollment: ${res.status}`);
+  return res.json();
+}
+
+export async function createUser(data: {
+  email: string; fullName: string; role: UserRole; departmentId?: string;
+  rollNo?: string; facultyId?: string; admissionYear?: number;
+}): Promise<User> {
+  const res = await fetch(`${API_BASE_URL}/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (res.status === 409) throw new Error('A user with that email, roll number, or faculty ID already exists.');
+  if (!res.ok) throw new Error(`Failed to create user: ${res.status}`);
+  return res.json();
+}
+
+export interface BulkImportResult {
+  success: { row: number; rollNo: string; email: string }[];
+  failed: { row: number; rollNo?: string; error: string }[];
+}
+
+export async function bulkImportStudents(file: File, departmentId: string, admissionYear: string): Promise<BulkImportResult> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('departmentId', departmentId);
+  formData.append('admissionYear', admissionYear);
+  const res = await fetch(`${API_BASE_URL}/users/bulk-import`, {
+    method: 'POST',
+    body: formData, // no Content-Type header — browser sets the multipart boundary itself; setting it manually breaks parsing
+  });
+  if (!res.ok) throw new Error(`Bulk import failed: ${res.status}`);
+  return res.json();
+}

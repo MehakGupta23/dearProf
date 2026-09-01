@@ -9,6 +9,13 @@ import { GeneralAnnouncements } from "./pages/announcements/GeneralAnnouncements
 import { Departments } from "./pages/admin/Departments";
 import { Subjects } from "./pages/admin/Subjects";
 import { Terms } from "./pages/admin/Terms";
+import { TeachingAssignments } from "./pages/admin/TeachingAssignments";
+import { Enrollments } from "./pages/admin/Enrollments";
+import { Students } from "./pages/admin/Students";
+import { StudentDetail } from "./pages/admin/StudentDetail";
+import { Dashboard } from "./pages/admin/Dashboard";
+import { Professors } from "./pages/admin/Professors";
+import { ProfessorDetail } from "./pages/admin/ProfessorDetail";
 
 function App() {
   return (
@@ -45,6 +52,16 @@ function App() {
         <Route path="/admin/departments" element={<Departments />} />
         <Route path="/admin/subjects" element={<Subjects />} />
         <Route path="/admin/terms" element={<Terms />} />
+        <Route
+          path="/admin/teaching-assignments"
+          element={<TeachingAssignments />}
+        />
+        <Route path="/admin/enrollments" element={<Enrollments />} />
+        <Route path="/admin/students" element={<Students />} />
+        <Route path="/admin/students/:id" element={<StudentDetail />} />
+        <Route path="/admin" element={<Dashboard />} />
+        <Route path="/admin/professors" element={<Professors />} />
+        <Route path="/admin/professors/:id" element={<ProfessorDetail />} />
       </Route>
     </Routes>
   );
