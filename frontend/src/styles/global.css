@@ -60,3 +60,20 @@ button:active {
   filter: brightness(0.9);
   transform: scale(0.98);
 }
+
+/* global.css mein add karo, button states ke neeche */
+.course-list { list-style: none; }
+.course-list li { border-bottom: 1px solid var(--ink-15); }
+.course-list li:first-child { border-top: 1px solid var(--ink-15); }
+.course-list a {
+  display: flex; align-items: center; padding: 14px 12px; color: var(--ink);
+  text-decoration: none; font-size: 14px; border-left: 3px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.course-list a:hover { background: var(--navy-08); }
+.course-list a.active {
+  border-left-color: var(--navy); background: var(--navy-08);
+  color: var(--navy); font-weight: 500;
+}
+
+.form-error { font-size: 13px; color: #b3453f; }

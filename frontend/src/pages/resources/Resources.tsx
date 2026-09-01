@@ -2,7 +2,7 @@ import './Resources.css';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
-import { getSubjects, getEnrollmentsForStudent, getTeachingAssignments, type Subject } from '../../lib/api';
+import { getSubjectsForUser, type Subject } from '../../lib/api';
 
 export function Resources() {
   const { profile } = useAuth();
@@ -10,22 +10,11 @@ export function Resources() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!profile) return;
-    async function load() {
-      const allSubjects = await getSubjects();
-      const byId = new Map(allSubjects.map((s) => [s.id, s]));
-      let ids: string[] = [];
-      if (profile!.role === 'student') {
-        ids = (await getEnrollmentsForStudent(profile!.id)).map((e) => e.subjectId);
-      } else if (profile!.role === 'professor') {
-        ids = (await getTeachingAssignments())
-          .filter((a) => a.professorId === profile!.id)
-          .map((a) => a.subjectId);
-      }
-      setSubjects(ids.map((id) => byId.get(id)).filter(Boolean) as Subject[]);
-      setLoading(false);
-    }
-    load();
+  if (!profile) return;
+  getSubjectsForUser(profile).then((s) => {
+    setSubjects(s);
+    setLoading(false);
+  });
   }, [profile]);
 
   if (loading) return <p>Loading courses...</p>;

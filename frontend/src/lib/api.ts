@@ -90,3 +90,54 @@ export async function getResourceDownloadUrl(resourceId: string): Promise<string
   const data = await res.json();
   return data.url;
 }
+
+export async function getSubjectsForUser(profile: User): Promise<Subject[]> {
+  const allSubjects = await getSubjects();
+  const byId = new Map(allSubjects.map((s) => [s.id, s]));
+  let ids: string[] = [];
+  if (profile.role === 'student') {
+    ids = (await getEnrollmentsForStudent(profile.id)).map((e) => e.subjectId);
+  } else if (profile.role === 'professor') {
+    ids = (await getTeachingAssignments())
+      .filter((a) => a.professorId === profile.id)
+      .map((a) => a.subjectId);
+  }
+  return ids.map((id) => byId.get(id)).filter(Boolean) as Subject[];
+}
+
+export interface Announcement {
+  id: string;
+  subjectId: string | null;
+  title: string;
+  body: string;
+  postedBy: string;
+  termId: string;
+  createdAt: string;
+}
+
+export async function getAnnouncementsBySubject(subjectId: string): Promise<Announcement[]> {
+  const res = await fetch(`${API_BASE_URL}/announcements/subject/${subjectId}`);
+  if (!res.ok) throw new Error(`Failed to fetch announcements: ${res.status}`);
+  return res.json();
+}
+
+export async function getGeneralAnnouncements(departmentId: string): Promise<Announcement[]> {
+  const res = await fetch(`${API_BASE_URL}/announcements/general/${departmentId}`);
+  if (!res.ok) throw new Error(`Failed to fetch general announcements: ${res.status}`);
+  return res.json();
+}
+
+export async function createAnnouncement(data: {
+  subjectId?: string; title: string; body: string; postedBy: string;
+}): Promise<Announcement> {
+  const res = await fetch(`${API_BASE_URL}/announcements`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    if (res.status === 409) throw new Error('No current term set — cannot post right now.');
+    throw new Error(`Failed to create announcement: ${res.status}`);
+  }
+  return res.json();
+}

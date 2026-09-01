@@ -1,0 +1,22 @@
+.announcement-form {
+  display: flex; flex-direction: column; gap: 10px; max-width: 420px;
+  margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--ink-15);
+}
+.announcement-form input[type="text"],
+.announcement-form textarea {
+  padding: 9px 10px; border: 1px solid var(--ink-15); border-radius: 6px;
+  background: var(--surface); color: var(--ink); font-size: 14px;
+  font-family: inherit; resize: vertical;
+}
+.announcement-form input[type="text"]:focus,
+.announcement-form textarea:focus { outline: none; border-color: var(--navy); }
+.announcement-form button {
+  align-self: flex-start; padding: 8px 18px; background: var(--navy);
+  color: #fff; font-size: 14px; font-weight: 500;
+}
+.announcement-form button:disabled { background: var(--ink-15); color: var(--ink-60); cursor: not-allowed; }
+
+.announcement-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+.announcement-list li { padding-bottom: 18px; border-bottom: 1px solid var(--ink-15); }
+.announcement-list h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+.announcement-list p { font-size: 14px; color: var(--ink-60); line-height: 1.5; }
