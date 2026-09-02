@@ -16,12 +16,15 @@ import { StudentDetail } from "./pages/admin/StudentDetail";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { Professors } from "./pages/admin/Professors";
 import { ProfessorDetail } from "./pages/admin/ProfessorDetail";
+import { Login } from "./pages/auth/Login";
+import { Home } from "./pages/Home";
 
 function App() {
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
       <Route element={<AppShell />}>
-        <Route path="/" element={<div>Home — coming soon</div>} />
+        <Route path="/" element={<Home/>} />
         <Route
           path="/resources"
           element={
@@ -62,6 +65,7 @@ function App() {
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/professors" element={<Professors />} />
         <Route path="/admin/professors/:id" element={<ProfessorDetail />} />
+        
       </Route>
     </Routes>
   );

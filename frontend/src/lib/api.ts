@@ -1,3 +1,4 @@
+import { supabase } from './supabase';
 const API_BASE_URL = 'http://localhost:3000/api';
 
 export type UserRole = 'student' | 'professor' | 'admin';
@@ -15,11 +16,12 @@ export interface User {
   createdAt: string;
 }
 
-export async function getUserById(id: string): Promise<User | null> {
-  const res = await fetch(`${API_BASE_URL}/users/${id}`);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Failed to fetch user ${id}: ${res.status}`);
-  return res.json();
+export async function getUserById(id: string) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    headers: { Authorization: `Bearer ${session?.access_token}`}});
+  if (!response.ok) { throw new Error(`Failed to fetch user ${id}: ${response.status}`)}
+  return response.json();
 }
 
 export interface NotificationCount {
