@@ -1,0 +1,145 @@
+.queries-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 40px;
+}
+
+.queries-header {
+  margin-bottom: 32px;
+}
+
+.queries-eyebrow {
+  margin-bottom: 10px;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.queries-header h1 {
+  margin-bottom: 8px;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.queries-header p {
+  color: var(--ink-60);
+  font-size: 14px;
+}
+
+.queries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.query-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 22px;
+  border: 1px solid var(--ink-15);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.query-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--navy);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.query-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.query-card h2 {
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.query-date {
+  color: var(--ink-60);
+  font-size: 12px;
+}
+
+.query-status {
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.query-status.pending {
+  background: var(--navy-08);
+  color: var(--navy);
+}
+
+.query-status.resolved {
+  background: var(--navy-08);
+  color: var(--navy);
+}
+
+.query-status.closed {
+  background: var(--ink-15);
+  color: var(--ink-60);
+}
+
+.query-arrow {
+  color: var(--navy);
+  font-size: 20px;
+}
+
+.empty-queries {
+  padding: 70px 30px;
+  border: 1px solid var(--ink-15);
+  border-radius: 10px;
+  background: var(--surface);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.empty-icon {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  border-radius: 8px;
+  background: var(--navy-08);
+  color: var(--navy);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.empty-queries h2 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.empty-queries p {
+  color: var(--ink-60);
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .queries-page {
+    padding: 32px 20px;
+  }
+
+  .query-card {
+    padding: 16px;
+  }
+}
