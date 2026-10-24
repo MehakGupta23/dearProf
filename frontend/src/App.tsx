@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AppShell } from "./layouts/AppShell";
 import { MasterDetailLayout } from "./layouts/MasterDetailLayout";
 import { Resources } from "./pages/resources/Resources";
@@ -17,12 +17,14 @@ import { Dashboard } from "./pages/admin/Dashboard";
 import { Professors } from "./pages/admin/Professors";
 import { ProfessorDetail } from "./pages/admin/ProfessorDetail";
 import { Login } from "./pages/auth/Login";
+import { SetPassword } from "./pages/auth/SetPassword";
 import { Home } from "./pages/Home";
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/set-password" element={<SetPassword />} />
       <Route element={<AppShell />}>
         <Route path="/" element={<Home/>} />
         <Route
@@ -67,6 +69,7 @@ function App() {
         <Route path="/admin/professors/:id" element={<ProfessorDetail />} />
         
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} /> 
     </Routes>
   );
 }

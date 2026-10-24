@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, Navigate } from 'react-router-dom';
+import { NavLink, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { getUnreadNotificationCount } from '../lib/api';
 import { supabase } from '../lib/supabase';
@@ -7,11 +7,12 @@ import './AppShell.css';
 
 export function AppShell() {
   const { profile, session, loading, signOut } = useAuth();
+  const location = useLocation();
   const [unreadCount, setUnreadCount] = useState(0);
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   // Unread count: Realtime subscription (Rule 8) + a slow poll underneath as fallback
@@ -41,9 +42,15 @@ export function AppShell() {
     };
   }, [profile?.id]);
 
+  // ---- guards: all hooks are above this line ----
   if (loading) { return <div>Loading...</div>; }
   if (!session) { return <Navigate to="/login" replace />; }
   if (!profile) { return <div>Unable to load your profile.</div>; }
+
+  const isAdmin = profile.role === 'admin';
+  const onAdminPath = location.pathname.startsWith('/admin');
+  if (isAdmin && !onAdminPath) { return <Navigate to="/admin" replace />; }
+  if (!isAdmin && onAdminPath) { return <Navigate to="/" replace />; }
 
   const roleIdentifier =
     profile.role === 'student' ? profile.rollNo :
@@ -65,9 +72,9 @@ export function AppShell() {
 
       <div className="shell-body">
         <nav className="sidebar">
-          {profile.role === 'admin' ? (
+          {isAdmin ? (
             <>
-              <NavLink to="/admin">Dashboard</NavLink>
+              <NavLink to="/admin" end>Dashboard</NavLink>
               <NavLink to="/admin/students">Students</NavLink>
               <NavLink to="/admin/professors">Professors</NavLink>
               <NavLink to="/admin/departments">Departments</NavLink>
@@ -78,7 +85,7 @@ export function AppShell() {
             </>
           ) : (
             <>
-              <NavLink to="/">Home</NavLink>
+              <NavLink to="/" end>Home</NavLink>
               <NavLink to="/attendance">Attendance</NavLink>
               <NavLink to="/resources">Resources</NavLink>
               <NavLink to="/announcements">Announcements</NavLink>
