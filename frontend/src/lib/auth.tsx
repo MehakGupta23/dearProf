@@ -16,32 +16,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sessionChecked, setSessionChecked] = useState(false);
 
   // Session: initial load + future changes (login, logout, token refresh)
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session);
+    setSessionChecked(true);
+  });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
 
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => subscription.unsubscribe();
+}, []);
 
-  // Profile: fetch public.users row once we know who's logged in
-  useEffect(() => {
-    if (!session?.user?.id) {
-      setProfile(null);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    getUserById(session.user.id)
-      .then(setProfile)
-      .finally(() => setLoading(false));
-  }, [session?.user?.id]);
+// Profile: fetch public.users row once we know who's logged in
+useEffect(() => {
+  if (!sessionChecked) return;
+  if (!session?.user?.id) {
+    setProfile(null);
+    setLoading(false);
+    return;
+  }
+  setLoading(true);
+  getUserById(session.user.id)
+    .then(setProfile)
+    .catch(() => setProfile(null))
+    .finally(() => setLoading(false));
+}, [sessionChecked, session?.user?.id]);
 
   async function signOut() {
     await supabase.auth.signOut();

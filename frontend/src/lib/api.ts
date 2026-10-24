@@ -1,5 +1,12 @@
 import { supabase } from './supabase';
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api';
+
+async function apiFetch(path: string, init: RequestInit = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  const headers = new Headers(init.headers);
+  if (session) headers.set('Authorization', `Bearer ${session.access_token}`);
+  return fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+}
 
 export type UserRole = 'student' | 'professor' | 'admin';
 
@@ -18,9 +25,9 @@ export interface User {
 
 export async function getUserById(id: string) {
   const { data: { session } } = await supabase.auth.getSession();
-  const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+  const response = await apiFetch(`${API_BASE_URL}/users/${id}`, {
     headers: { Authorization: `Bearer ${session?.access_token}`}});
-  if (!response.ok) { throw new Error(`Failed to fetch user ${id}: ${response.status}`)}
+  if (!response.ok) { throw new Error(`Failed to apiFetch user ${id}: ${response.status}`)}
   return response.json();
 }
 
@@ -29,8 +36,8 @@ export interface NotificationCount {
 }
 
 export async function getUnreadNotificationCount(userId: string): Promise<number> {
-  const res = await fetch(`${API_BASE_URL}/notifications/user/${userId}/unread-count`);
-  if (!res.ok) throw new Error(`Failed to fetch unread count: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/notifications/user/${userId}/unread-count`);
+  if (!res.ok) throw new Error(`Failed to apiFetch unread count: ${res.status}`);
   const data: NotificationCount = await res.json();
   return data.count;
 }
@@ -41,31 +48,31 @@ export interface Assignment { id: string; professorId: string; subjectId: string
 export interface Resource { id: string; subjectId: string; uploadedBy: string; title: string; fileUrl: string; createdAt: string; }
 
 export async function getSubjects(): Promise<Subject[]> {
-  const res = await fetch(`${API_BASE_URL}/subjects`);
-  if (!res.ok) throw new Error(`Failed to fetch subjects: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/subjects`);
+  if (!res.ok) throw new Error(`Failed to apiFetch subjects: ${res.status}`);
   return res.json();
 }
 
 export async function getEnrollmentsForStudent(studentId: string): Promise<Enrollment[]> {
-  const res = await fetch(`${API_BASE_URL}/enrollments/student/${studentId}`);
-  if (!res.ok) throw new Error(`Failed to fetch enrollments: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/enrollments/student/${studentId}`);
+  if (!res.ok) throw new Error(`Failed to apiFetch enrollments: ${res.status}`);
   return res.json();
 }
 
 export async function getTeachingAssignments(): Promise<Assignment[]> {
-  const res = await fetch(`${API_BASE_URL}/teaching-assignments`);
-  if (!res.ok) throw new Error(`Failed to fetch teaching assignments: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/teaching-assignments`);
+  if (!res.ok) throw new Error(`Failed to apiFetch teaching assignments: ${res.status}`);
   return res.json();
 }
 
 export async function getResourcesBySubject(subjectId: string): Promise<Resource[]> {
-  const res = await fetch(`${API_BASE_URL}/resources/subject/${subjectId}`);
-  if (!res.ok) throw new Error(`Failed to fetch resources: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/resources/subject/${subjectId}`);
+  if (!res.ok) throw new Error(`Failed to apiFetch resources: ${res.status}`);
   return res.json();
 }
 
 export async function getResourceUploadUrl(subjectId: string, fileName: string) {
-  const res = await fetch(`${API_BASE_URL}/resources/upload-url`, {
+  const res = await apiFetch(`${API_BASE_URL}/resources/upload-url`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ subjectId, fileName }),
@@ -77,7 +84,7 @@ export async function getResourceUploadUrl(subjectId: string, fileName: string) 
 export async function saveResourceMetadata(data: {
   subjectId: string; uploadedBy: string; title: string; fileUrl: string;
 }): Promise<Resource> {
-  const res = await fetch(`${API_BASE_URL}/resources`, {
+  const res = await apiFetch(`${API_BASE_URL}/resources`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -87,7 +94,7 @@ export async function saveResourceMetadata(data: {
 }
 
 export async function getResourceDownloadUrl(resourceId: string): Promise<string> {
-  const res = await fetch(`${API_BASE_URL}/resources/${resourceId}/download-url`);
+  const res = await apiFetch(`${API_BASE_URL}/resources/${resourceId}/download-url`);
   if (!res.ok) throw new Error(`Failed to get download URL: ${res.status}`);
   const data = await res.json();
   return data.url;
@@ -118,21 +125,21 @@ export interface Announcement {
 }
 
 export async function getAnnouncementsBySubject(subjectId: string): Promise<Announcement[]> {
-  const res = await fetch(`${API_BASE_URL}/announcements/subject/${subjectId}`);
-  if (!res.ok) throw new Error(`Failed to fetch announcements: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/announcements/subject/${subjectId}`);
+  if (!res.ok) throw new Error(`Failed to apiFetch announcements: ${res.status}`);
   return res.json();
 }
 
 export async function getGeneralAnnouncements(departmentId: string): Promise<Announcement[]> {
-  const res = await fetch(`${API_BASE_URL}/announcements/general/${departmentId}`);
-  if (!res.ok) throw new Error(`Failed to fetch general announcements: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/announcements/general/${departmentId}`);
+  if (!res.ok) throw new Error(`Failed to apiFetch general announcements: ${res.status}`);
   return res.json();
 }
 
 export async function createAnnouncement(data: {
   subjectId?: string; title: string; body: string; postedBy: string;
 }): Promise<Announcement> {
-  const res = await fetch(`${API_BASE_URL}/announcements`, {
+  const res = await apiFetch(`${API_BASE_URL}/announcements`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -147,13 +154,13 @@ export async function createAnnouncement(data: {
 export interface Department { id: string; name: string; code: string | null; }
 
 export async function getDepartments(): Promise<Department[]> {
-  const res = await fetch(`${API_BASE_URL}/departments`);
-  if (!res.ok) throw new Error(`Failed to fetch departments: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/departments`);
+  if (!res.ok) throw new Error(`Failed to apiFetch departments: ${res.status}`);
   return res.json();
 }
 
 export async function createDepartment(data: { name: string; code?: string }): Promise<Department> {
-  const res = await fetch(`${API_BASE_URL}/departments`, {
+  const res = await apiFetch(`${API_BASE_URL}/departments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -164,7 +171,7 @@ export async function createDepartment(data: { name: string; code?: string }): P
 }
 
 export async function createSubject(data: { name: string; code?: string; departmentId?: string }): Promise<Subject> {
-  const res = await fetch(`${API_BASE_URL}/subjects`, {
+  const res = await apiFetch(`${API_BASE_URL}/subjects`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -177,13 +184,13 @@ export async function createSubject(data: { name: string; code?: string; departm
 export interface Term { id: string; name: string; startDate: string | null; endDate: string | null; isCurrent: boolean; }
 
 export async function getTerms(): Promise<Term[]> {
-  const res = await fetch(`${API_BASE_URL}/terms`);
-  if (!res.ok) throw new Error(`Failed to fetch terms: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/terms`);
+  if (!res.ok) throw new Error(`Failed to apiFetch terms: ${res.status}`);
   return res.json();
 }
 
 export async function createTerm(data: { name: string; startDate?: string; endDate?: string }): Promise<Term> {
-  const res = await fetch(`${API_BASE_URL}/terms`, {
+  const res = await apiFetch(`${API_BASE_URL}/terms`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -193,21 +200,21 @@ export async function createTerm(data: { name: string; startDate?: string; endDa
 }
 
 export async function setCurrentTerm(id: string): Promise<Term> {
-  const res = await fetch(`${API_BASE_URL}/terms/${id}/set-current`, { method: 'PATCH' });
+  const res = await apiFetch(`${API_BASE_URL}/terms/${id}/set-current`, { method: 'PATCH' });
   if (!res.ok) throw new Error(`Failed to set current term: ${res.status}`);
   return res.json();
 }
 
 export async function getUsers(): Promise<User[]> {
-  const res = await fetch(`${API_BASE_URL}/users`);
-  if (!res.ok) throw new Error(`Failed to fetch users: ${res.status}`);
+  const res = await apiFetch(`${API_BASE_URL}/users`);
+  if (!res.ok) throw new Error(`Failed to apiFetch users: ${res.status}`);
   return res.json();
 }
 
 export async function createTeachingAssignment(data: {
   professorId: string; subjectId: string; termId: string;
 }): Promise<Assignment> {
-  const res = await fetch(`${API_BASE_URL}/teaching-assignments`, {
+  const res = await apiFetch(`${API_BASE_URL}/teaching-assignments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -218,7 +225,7 @@ export async function createTeachingAssignment(data: {
 }
 
 export async function createEnrollment(data: { studentId: string; subjectId: string; termId: string }): Promise<Enrollment> {
-  const res = await fetch(`${API_BASE_URL}/enrollments`, {
+  const res = await apiFetch(`${API_BASE_URL}/enrollments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -232,7 +239,7 @@ export async function createUser(data: {
   email: string; fullName: string; role: UserRole; departmentId?: string;
   rollNo?: string; facultyId?: string; admissionYear?: number;
 }): Promise<User> {
-  const res = await fetch(`${API_BASE_URL}/users`, {
+  const res = await apiFetch(`${API_BASE_URL}/users`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -252,7 +259,7 @@ export async function bulkImportStudents(file: File, departmentId: string, admis
   formData.append('file', file);
   formData.append('departmentId', departmentId);
   formData.append('admissionYear', admissionYear);
-  const res = await fetch(`${API_BASE_URL}/users/bulk-import`, {
+  const res = await apiFetch(`${API_BASE_URL}/users/bulk-import`, {
     method: 'POST',
     body: formData, // no Content-Type header — browser sets the multipart boundary itself; setting it manually breaks parsing
   });
