@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { getUnreadNotificationCount } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import './AppShell.css';
 
 export function AppShell() {
-  const { profile, signOut } = useAuth();
+  const { profile, session, loading, signOut } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [isDark, setIsDark] = useState(false);
 
@@ -41,7 +41,9 @@ export function AppShell() {
     };
   }, [profile?.id]);
 
-  if (!profile) return null; // still loading auth, or logged out
+  if (loading) { return <div>Loading...</div>; }
+  if (!session) { return <Navigate to="/login" replace />; }
+  if (!profile) { return <div>Unable to load your profile.</div>; }
 
   const roleIdentifier =
     profile.role === 'student' ? profile.rollNo :
