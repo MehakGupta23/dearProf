@@ -61,7 +61,7 @@ export function SetPassword() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (active && session) {
         setHasSession(true);
         setError('');

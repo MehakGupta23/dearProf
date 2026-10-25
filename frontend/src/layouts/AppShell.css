@@ -181,3 +181,8 @@
   .sidebar button:first-of-type { margin-top: 0; margin-left: auto; }
   .main-content { padding: 16px; }
 }
+
+.wordmark {
+  text-decoration: none;
+  color: inherit;
+}

@@ -19,6 +19,9 @@ import { ProfessorDetail } from "./pages/admin/ProfessorDetail";
 import { Login } from "./pages/auth/Login";
 import { SetPassword } from "./pages/auth/SetPassword";
 import { Home } from "./pages/Home";
+import { Queries } from "./pages/queries/Queries";
+import { TicketDetail } from "./pages/queries/TicketDetail";
+import { Attendance } from "./pages/attendance/Attendance";
 
 function App() {
   return (
@@ -67,6 +70,9 @@ function App() {
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/professors" element={<Professors />} />
         <Route path="/admin/professors/:id" element={<ProfessorDetail />} />
+        <Route path="/queries" element={<Queries />} />
+        <Route path="/queries/:id" element={<TicketDetail />} />
+        <Route path="/attendance" element={<Attendance />} />
         
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} /> 

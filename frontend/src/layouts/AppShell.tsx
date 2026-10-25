@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth';
 import { getUnreadNotificationCount } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import './AppShell.css';
+import { Link } from "react-router-dom";
 
 export function AppShell() {
   const { profile, session, loading, signOut } = useAuth();
@@ -60,7 +61,7 @@ export function AppShell() {
   return (
     <div className="app-shell">
       <header className="top-bar">
-        <span className="wordmark">dearProf</span>
+        <Link to="/" className="wordmark"> dearProf </Link>
         <div className="top-bar-right">
           <span className="user-name">{profile.fullName}</span>
           <span className="user-identifier">{roleIdentifier}</span>

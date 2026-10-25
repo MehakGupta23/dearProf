@@ -2,10 +2,17 @@ import { supabase } from './supabase';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api';
 
 async function apiFetch(path: string, init: RequestInit = {}) {
-  const { data: { session } } = await supabase.auth.getSession();
-  const headers = new Headers(init.headers);
-  if (session) headers.set('Authorization', `Bearer ${session.access_token}`);
-  return fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const headers = new Headers(init.headers);
+
+    if (session) headers.set('Authorization', `Bearer ${session.access_token}`);
+
+    const url = path.startsWith('http')
+      ? path
+      : `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+
+    return fetch(url, { ...init, headers });
 }
 
 export type UserRole = 'student' | 'professor' | 'admin';
@@ -20,6 +27,26 @@ export interface User {
   facultyId: string | null;
   admissionYear: number | null;
   isActive: boolean;
+  createdAt: string;
+}
+
+export interface Ticket {
+  id: string;
+  studentId: string;
+  professorId: string;
+  subjectId: string;
+  termId: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+} 
+
+export interface TicketMessage {
+  id: string;
+  ticketId: string;
+  senderId: string;
+  message: string;
   createdAt: string;
 }
 
@@ -264,5 +291,247 @@ export async function bulkImportStudents(file: File, departmentId: string, admis
     body: formData, // no Content-Type header — browser sets the multipart boundary itself; setting it manually breaks parsing
   });
   if (!res.ok) throw new Error(`Bulk import failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getTickets(): Promise<Ticket[]> {
+  const response = await apiFetch('/tickets');
+
+  if (!response.ok) {
+    throw new Error('Failed to load tickets');
+  }
+
+  return response.json();
+}
+
+export async function getTicketById(id: string): Promise<Ticket> {
+  const response = await apiFetch(`/tickets/${id}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to load ticket');
+  }
+
+  return response.json();
+}
+
+export async function createTicket(data: {
+  professorId: string;
+  subjectId: string;
+  title: string;
+}): Promise<Ticket> {
+  const response = await apiFetch('/tickets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create ticket');
+  }
+
+  return response.json();
+}
+
+
+export interface AttendanceSession {
+  id: string;
+  subjectId: string;
+  termId: string;
+  professorId: string;
+  sessionDate: string;
+  sessionLabel: string | null;
+  createdAt?: string;
+  isLatest?: boolean;
+  totalMarked?: number;
+  presentCount?: number;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  sessionId: string;
+  studentId: string;
+  status: 'present' | 'absent';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface StudentAttendanceRecord {
+  id: string;
+  sessionId: string;
+  studentId: string;
+  status: 'present' | 'absent';
+  sessionDate: string;
+  sessionLabel: string | null;
+  subjectId: string;
+  subjectName: string;
+  subjectCode: string | null;
+  termId: string;
+  termName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubjectAttendanceSummary {
+  subjectId: string;
+  subjectName: string;
+  subjectCode: string | null;
+  totalSessions: number;
+  presentSessions: number;
+  absentSessions: number;
+  percentage: number;
+}
+
+export interface StudentAttendanceData {
+  records: StudentAttendanceRecord[];
+  summary: SubjectAttendanceSummary[];
+  overall: {
+    totalSessions: number;
+    presentSessions: number;
+    absentSessions: number;
+    percentage: number;
+  };
+}
+
+export interface EnrolledStudent {
+  studentId: string;
+  fullName: string;
+  rollNo: string | null;
+  email: string;
+}
+
+export interface SessionRosterRecord {
+  studentId: string;
+  fullName: string;
+  rollNo: string | null;
+  email: string;
+  status: 'present' | 'absent' | null;
+  recordId: string | null;
+  updatedAt: string | null;
+}
+
+export interface SessionDetailsResponse {
+  session: AttendanceSession & { isLatest: boolean };
+  records: SessionRosterRecord[];
+}
+
+export async function getMyAttendance(): Promise<StudentAttendanceData> {
+  const res = await apiFetch(`${API_BASE_URL}/attendance/my`);
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to load attendance: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getAttendanceSessions(
+  subjectId: string,
+  termId?: string
+): Promise<AttendanceSession[]> {
+  const url = termId
+    ? `${API_BASE_URL}/attendance/sessions/${subjectId}?termId=${encodeURIComponent(termId)}`
+    : `${API_BASE_URL}/attendance/sessions/${subjectId}`;
+
+  const res = await apiFetch(url);
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to load sessions: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function createAttendanceSession(data: {
+  subjectId: string;
+  termId: string;
+  sessionDate: string;
+  sessionLabel?: string;
+}): Promise<AttendanceSession> {
+  const res = await apiFetch(`${API_BASE_URL}/attendance/sessions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to create session: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getAttendanceForSession(
+  sessionId: string
+): Promise<SessionDetailsResponse> {
+  const res = await apiFetch(
+    `${API_BASE_URL}/attendance/sessions/${sessionId}/records`
+  );
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to load attendance records: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function getAttendanceRoster(
+  subjectId: string,
+  termId: string
+): Promise<EnrolledStudent[]> {
+  const res = await apiFetch(
+    `${API_BASE_URL}/attendance/roster?subjectId=${encodeURIComponent(
+      subjectId
+    )}&termId=${encodeURIComponent(termId)}`
+  );
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to load roster: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function markAttendance(data: {
+  sessionId: string;
+  studentId: string;
+  status: 'present' | 'absent';
+}): Promise<AttendanceRecord> {
+  const res = await apiFetch(`${API_BASE_URL}/attendance/records`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to mark attendance: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function saveSessionAttendance(data: {
+  sessionId: string;
+  records: Array<{
+    studentId: string;
+    status: 'present' | 'absent';
+  }>;
+}): Promise<AttendanceRecord[]> {
+  const res = await apiFetch(`${API_BASE_URL}/attendance/records`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Failed to save attendance: ${res.status}`);
+  }
+
   return res.json();
 }

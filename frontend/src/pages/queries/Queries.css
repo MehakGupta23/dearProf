@@ -143,3 +143,132 @@
     padding: 16px;
   }
 }
+
+
+/* Query header and primary action */
+.queries-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.queries-header > div {
+  min-width: 0;
+}
+
+.queries-header > div > p:last-child {
+  margin-bottom: 0;
+}
+
+.queries-header button,
+.query-form button[type="submit"] {
+  flex-shrink: 0;
+  padding: 11px 18px;
+  border: 1px solid var(--navy);
+  border-radius: 7px;
+  background: var(--navy);
+  color: white;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.queries-header button:hover,
+.query-form button[type="submit"]:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.query-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Query creation panel */
+.query-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 28px;
+  padding: 28px;
+  border: 1px solid var(--ink-15);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.query-form h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.query-form label {
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.query-form select,
+.query-form textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--ink-15);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.query-form select {
+  min-height: 44px;
+}
+
+.query-form textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.query-form select:focus,
+.query-form textarea:focus {
+  border-color: var(--navy);
+  outline: 2px solid var(--navy-08);
+  outline-offset: 1px;
+}
+
+.query-form button[type="submit"] {
+  align-self: flex-start;
+  margin-top: 12px;
+}
+
+.query-form [role="alert"] {
+  margin: 4px 0;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.query-form p {
+  color: var(--ink-60);
+  font-size: 13px;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+  .queries-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .query-form {
+    padding: 20px;
+  }
+}
