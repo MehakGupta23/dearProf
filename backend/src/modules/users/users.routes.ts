@@ -5,7 +5,7 @@ import { auth } from '../../middleware/auth';
 import { requireRole } from '../../middleware/requireRole';
 import multer from 'multer';
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
 router.get('/', auth, requireRole('admin'), async (req, res) => {
