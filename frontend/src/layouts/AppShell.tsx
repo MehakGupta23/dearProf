@@ -50,7 +50,6 @@ export function AppShell() {
 
   const isAdmin = profile.role === 'admin';
   const onAdminPath = location.pathname.startsWith('/admin');
-  if (isAdmin && !onAdminPath) { return <Navigate to="/admin" replace />; }
   if (!isAdmin && onAdminPath) { return <Navigate to="/" replace />; }
 
   const roleIdentifier =
