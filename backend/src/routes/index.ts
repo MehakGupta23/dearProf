@@ -31,6 +31,7 @@ router.use('/departments', adminWrites, departmentsRoutes);
 router.use('/resources', resourcesRoutes);
 router.use('/announcements', announcementsRoutes);
 router.use('/notifications', notificationsRoutes);
+router.get('/users', requireRole('admin'));
 router.use('/users', adminWrites, usersRoutes);
 router.use('/teaching-assignments', adminWrites, teachingAssignmentsRoutes);
 router.use('/tickets', ticketsRoutes);
