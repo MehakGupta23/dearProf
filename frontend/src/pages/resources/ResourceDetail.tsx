@@ -3,7 +3,13 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
-import {getResourceDownloadUrl, getResourcesBySubject, getResourceUploadUrl, saveResourceMetadata, type Resource,} from '../../lib/api';
+import {
+  getResourceDownloadUrl,
+  getResourcesBySubject,
+  getResourceUploadUrl,
+  saveResourceMetadata,
+  type Resource,
+} from '../../lib/api';
 
 export function ResourceDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -14,6 +20,8 @@ export function ResourceDetail() {
   const [title, setTitle] = useState('');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!subjectId) return;
@@ -41,7 +49,6 @@ export function ResourceDetail() {
         .uploadToSignedUrl(path, token, file);
       if (uploadError) throw uploadError;
 
-      
       const created = await saveResourceMetadata({
         subjectId, uploadedBy: profile.id, title: title.trim(), fileUrl: path,
       });
@@ -56,10 +63,36 @@ export function ResourceDetail() {
     }
   }
 
+  // Open in a new tab. The tab is opened synchronously (inside the click) so popup blockers allow it.
+  async function handleView(resourceId: string) {
+    setActionError(null);
+    setBusyId(resourceId);
+    const tab = window.open('', '_blank');
+    try {
+      const url = await getResourceDownloadUrl(resourceId);
+      if (tab) tab.location.href = url;
+      else window.location.assign(url);
+    } catch {
+      tab?.close();
+      setActionError('Could not open the file. Try again.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  // Save to disk: the signed URL is requested with ?download=1, so the browser downloads it.
   async function handleDownload(resourceId: string) {
-  const url = await getResourceDownloadUrl(resourceId);
-  window.open(url, '_blank');
-}
+    setActionError(null);
+    setBusyId(resourceId);
+    try {
+      const url = await getResourceDownloadUrl(resourceId, { download: true });
+      window.location.assign(url);
+    } catch {
+      setActionError('Could not download the file. Try again.');
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   if (loading) return <p>Loading files...</p>;
 
@@ -67,9 +100,32 @@ export function ResourceDetail() {
     <div>
       <ul className="resource-list">
         {resources.map((r) => (
-          <li key={r.id}><button onClick={() => handleDownload(r.id)}>{r.title}</button></li>
+          <li key={r.id} className="resource-item">
+            <span className="resource-title">{r.title}</span>
+            <span className="resource-actions">
+              <button
+                type="button"
+                className="resource-btn"
+                onClick={() => handleView(r.id)}
+                disabled={busyId === r.id}
+              >
+                View
+              </button>
+              <button
+                type="button"
+                className="resource-btn resource-btn-primary"
+                onClick={() => handleDownload(r.id)}
+                disabled={busyId === r.id}
+              >
+                Download
+              </button>
+            </span>
+          </li>
         ))}
       </ul>
+
+      {resources.length === 0 && <p className="resource-empty">No files uploaded yet.</p>}
+      {actionError && <p className="form-error">{actionError}</p>}
 
       {profile?.role === 'professor' && (
         <form onSubmit={handleUpload} className="upload-form">

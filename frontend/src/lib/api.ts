@@ -120,8 +120,12 @@ export async function saveResourceMetadata(data: {
   return res.json();
 }
 
-export async function getResourceDownloadUrl(resourceId: string): Promise<string> {
-  const res = await apiFetch(`${API_BASE_URL}/resources/${resourceId}/download-url`);
+export async function getResourceDownloadUrl(
+  resourceId: string,
+  options?: { download?: boolean }
+): Promise<string> {
+  const query = options?.download ? '?download=1' : '';
+  const res = await apiFetch(`${API_BASE_URL}/resources/${resourceId}/download-url${query}`);
   if (!res.ok) throw new Error(`Failed to get download URL: ${res.status}`);
   const data = await res.json();
   return data.url;
