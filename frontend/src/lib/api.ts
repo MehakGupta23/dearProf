@@ -340,6 +340,13 @@ export async function createTicket(data: {
   return response.json();
 }
 
+export async function resendInvite(userId: string): Promise<'invite_sent' | 'reset_sent'> {
+  const res = await apiFetch(`${API_BASE_URL}/users/${userId}/resend-invite`, { method: 'POST' });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(body?.error ?? `Failed to resend: ${res.status}`);
+  return body.status;
+}
+
 
 export interface AttendanceSession {
   id: string;

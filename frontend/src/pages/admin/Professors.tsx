@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsers, getDepartments, createUser, type User, type Department } from '../../lib/api';
+import { ResendInviteButton } from './ResendInviteButton';
 import './Admin.css';
 
 export function Professors() {
@@ -61,13 +62,14 @@ export function Professors() {
       </form>
 
       <table className="admin-table">
-        <thead><tr><th>Name</th><th>Faculty ID</th><th>Email</th></tr></thead>
+        <thead><tr><th>Name</th><th>Faculty ID</th><th>Email</th><th></th></tr></thead>
         <tbody>
           {professors.map((p) => (
             <tr key={p.id}>
               <td><Link to={`/admin/professors/${p.id}`}>{p.fullName}</Link></td>
               <td>{p.facultyId ?? '—'}</td>
               <td>{p.email}</td>
+              <td><ResendInviteButton userId={p.id} /></td>
             </tr>
           ))}
         </tbody>

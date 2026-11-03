@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsers, getDepartments, createUser, bulkImportStudents, type User, type Department, type BulkImportResult } from '../../lib/api';
 import './Admin.css';
+import { ResendInviteButton } from './ResendInviteButton';
 
 export function Students() {
   const [students, setStudents] = useState<User[]>([]);
@@ -111,17 +112,18 @@ export function Students() {
       )}
 
       <table className="admin-table">
-        <thead><tr><th>Name</th><th>Roll No</th><th>Email</th></tr></thead>
-        <tbody>
-          {students.map((s) => (
-            <tr key={s.id}>
-              <td><Link to={`/admin/students/${s.id}`}>{s.fullName}</Link></td>
-              <td>{s.rollNo ?? '—'}</td>
-              <td>{s.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        <thead><tr><th>Name</th><th>Roll No</th><th>Email</th><th></th></tr></thead>
+          <tbody>
+            {students.map((s) => (
+              <tr key={s.id}>
+                <td><Link to={`/admin/students/${s.id}`}>{s.fullName}</Link></td>
+                <td>{s.rollNo ?? '—'}</td>
+                <td>{s.email}</td>
+                <td><ResendInviteButton userId={s.id} /></td>
+              </tr>
+            ))}
+          </tbody>
+       </table>
     </div>
   );
 }
