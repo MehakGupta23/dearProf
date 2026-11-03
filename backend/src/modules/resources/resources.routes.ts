@@ -36,9 +36,10 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id/download-url', async (req, res) => {
-  const resource = await getResourceById(req.params.id); // agar ye function abhi nahi hai, ek simple db lookup by id banana hoga
+  const resource = await getResourceById(req.params.id);
   if (!resource) return res.status(404).json({ error: 'Not found' });
-  const url = await createSignedDownloadUrl(resource.fileUrl); // fileUrl ab actual URL nahi, storage path store karega
+  const wantDownload = req.query.download === '1';
+  const url = await createSignedDownloadUrl(resource.fileUrl, { download: wantDownload });
   res.json({ url });
 });
 
