@@ -5,8 +5,8 @@ import { getAllDepartments, getDepartmentById, createDepartment } from './depart
 const router = Router();
 
 const createDepartmentSchema = z.object({
-  name: z.string().min(1),
-  code: z.string().optional(),
+  name: z.string().trim().min(1),
+  code: z.string().trim().min(1),
 });
 
 router.get('/', async (req, res) => {
