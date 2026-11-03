@@ -23,7 +23,7 @@ export function Departments() {
     setSaving(true);
     setError(null);
     try {
-      const created = await createDepartment({ name: name.trim(), code: code.trim() || undefined });
+      const created = await createDepartment({ name: name.trim(), code: code.trim()});
       setDepartments((prev) => [...prev, created]);
       setName('');
       setCode('');
@@ -40,8 +40,8 @@ export function Departments() {
     <div className="admin-page">
       <h1>Departments</h1>
       <form onSubmit={handleCreate} className="admin-form">
-        <input type="text" placeholder="Department name" value={name} onChange={(e) => setName(e.target.value)} />
-        <input type="text" placeholder="Code (optional)" value={code} onChange={(e) => setCode(e.target.value)} />
+        <input type="text" placeholder="Department name" value={name} onChange={(e) => setName(e.target.value)} required  />
+        <input type="text" placeholder="Code (e.g. EC001)" value={code} onChange={(e) => setCode(e.target.value)} required />
         {error && <p className="form-error">{error}</p>}
         <button type="submit" disabled={saving}>{saving ? 'Adding...' : 'Add department'}</button>
       </form>

@@ -190,14 +190,18 @@ export async function getDepartments(): Promise<Department[]> {
   return res.json();
 }
 
-export async function createDepartment(data: { name: string; code?: string }): Promise<Department> {
+export async function createDepartment(data: { name: string; code: string }): Promise<Department> {
   const res = await apiFetch(`${API_BASE_URL}/departments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (res.status === 409) throw new Error('A department with that code already exists.');
-  if (!res.ok) throw new Error(`Failed to create department: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    if (res.status === 409) throw new Error(body?.error ?? 'This department already exists.');
+    if (res.status === 400) throw new Error('Enter both a department name and a code.');
+    throw new Error(`Failed to create department: ${res.status}`);
+  }
   return res.json();
 }
 
