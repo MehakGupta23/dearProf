@@ -1,0 +1,21 @@
+.profile-page { max-width: 520px; }
+.profile-page h1 { margin-bottom: 16px; }
+.profile-page h2 { margin: 32px 0 12px; font-size: 18px; }
+
+.profile-details {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 10px 16px;
+  margin: 0;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--ink-15);
+  border-radius: 8px;
+}
+.profile-details dt { color: var(--ink-60); font-size: 13px; }
+.profile-details dd { margin: 0; color: var(--ink); font-size: 14px; overflow-wrap: anywhere; }
+.profile-role { text-transform: capitalize; }
+
+.profile-form { display: flex; flex-direction: column; gap: 12px; }
+.profile-form input { height: 44px; padding: 0 12px; }
+.profile-success { color: var(--navy); font-size: 14px; margin: 0; }

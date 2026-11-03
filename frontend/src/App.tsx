@@ -22,6 +22,7 @@ import { Home } from "./pages/Home";
 import { Queries } from "./pages/queries/Queries";
 import { TicketDetail } from "./pages/queries/TicketDetail";
 import { Attendance } from "./pages/attendance/Attendance";
+import { Profile } from "./pages/profile/Profile";
 
 function App() {
   return (
@@ -73,6 +74,8 @@ function App() {
         <Route path="/queries" element={<Queries />} />
         <Route path="/queries/:id" element={<TicketDetail />} />
         <Route path="/attendance" element={<Attendance />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin/profile" element={<Profile />} />
         
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} /> 

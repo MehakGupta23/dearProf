@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, Navigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { getUnreadNotificationCount } from '../lib/api';
 import { supabase } from '../lib/supabase';
@@ -155,6 +155,9 @@ export function AppShell() {
                   <strong>{profile.fullName}</strong>
                   <span>{roleIdentifier}</span>
                 </div>
+                <Link role="menuitem" to={profile.role === 'admin' ? '/admin/profile' : '/profile'} className="user-dropdown-link">
+                   My profile
+                </Link>
                 <button role="menuitem" onClick={() => setIsDark((d) => !d)}>
                   {isDark ? 'Light mode' : 'Dark mode'}
                 </button>

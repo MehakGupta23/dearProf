@@ -273,3 +273,12 @@
     padding: 16px;
   }
 }
+
+.user-dropdown-link {
+  display: block;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.user-dropdown-link:hover { text-decoration: underline; }
