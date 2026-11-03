@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(created);
   } catch (err: any) {
     if (err?.cause?.code === '23505') {
-      return res.status(409).json({ error: 'A department with this code already exists' });
+      return res.status(409).json({ error: 'A department with this code or name already exists' });
     }
     throw err;
   }

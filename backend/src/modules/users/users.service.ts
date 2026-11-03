@@ -1,7 +1,7 @@
 import { db } from '../../db';
 import { users } from '../../db/schema';
 import { eq } from 'drizzle-orm';
-import { inviteUser, deleteAuthUser } from '../../services/auth-admin.service';
+import { inviteUser, deleteAuthUser, getAuthUser, resendInvite, sendPasswordSetupEmail } from '../../services/auth-admin.service';
 import { parse } from 'csv-parse/sync';
 
 export async function getAllUsers() {
@@ -94,4 +94,17 @@ export async function bulkCreateStudents(
   }
 
   return result;
+}
+
+export async function resendLoginEmail(id: string) {
+  const user = await getUserById(id);
+  if (!user) return 'not_found' as const;
+
+  const authUser = await getAuthUser(id);
+  if (!authUser.email_confirmed_at) {
+    await resendInvite(user.email);
+    return 'invite_sent' as const;
+  }
+  await sendPasswordSetupEmail(user.email);
+  return 'reset_sent' as const;
 }

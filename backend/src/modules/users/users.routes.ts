@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { getAllUsers, getUserById, createUser, bulkCreateStudents } from './users.service';
+import { getAllUsers, getUserById, createUser, bulkCreateStudents, resendLoginEmail } from './users.service';
 import { auth } from '../../middleware/auth';
 import { requireRole } from '../../middleware/requireRole';
 import multer from 'multer';
@@ -56,6 +56,20 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
 
   const result = await bulkCreateStudents(req.file.buffer, parsed.data.departmentId, parsed.data.admissionYear);
   res.status(200).json(result);
+});
+
+router.post('/:id/resend-invite', async (req, res) => {
+  try {
+    const result = await resendLoginEmail(req.params.id);
+    if (result === 'not_found') return res.status(404).json({ error: 'User not found' });
+    res.json({ status: result });
+  } catch (err: any) {
+    console.error('resend-invite failed:', err);
+    if (err?.status === 429) {
+      return res.status(429).json({ error: 'Too many emails sent. Wait a while and try again.' });
+    }
+    res.status(502).json({ error: 'Could not send the email. Try again later.' });
+  }
 });
 
 export default router;
