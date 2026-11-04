@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../../lib/auth';
 import { getAnnouncementsBySubject, createAnnouncement, type Announcement } from '../../lib/api';
 import './AnnouncementDetail.css';
+import { AnnouncementCard } from './AnnouncementCard';
 
 export function AnnouncementDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -44,21 +45,25 @@ export function AnnouncementDetail() {
 
   if (loading) return <p>Loading announcements...</p>;
 
-  return (
-    <div>
+    return (
+    <div className="announcement-page">
       {profile?.role === 'professor' && (
         <form onSubmit={handlePost} className="announcement-form">
+          <h3>Post an announcement</h3>
           <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <textarea placeholder="Write an announcement..." value={body} onChange={(e) => setBody(e.target.value)} rows={3} />
+          <textarea placeholder="Write an announcement..." value={body} onChange={(e) => setBody(e.target.value)} rows={4} />
           {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={posting}>{posting ? 'Posting...' : 'Post'}</button>
         </form>
       )}
-      <ul className="announcement-list">
-        {announcements.map((a) => (
-          <li key={a.id}><h3>{a.title}</h3><p>{a.body}</p></li>
-        ))}
-      </ul>
+
+      {announcements.length === 0 ? (
+        <p className="empty-note">No announcements yet.</p>
+      ) : (
+        <ul className="announcement-list">
+          {announcements.map((a) => <AnnouncementCard key={a.id} a={a} />)}
+        </ul>
+      )}
     </div>
   );
 }

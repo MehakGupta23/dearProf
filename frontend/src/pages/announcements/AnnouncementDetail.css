@@ -1,22 +1,25 @@
+.announcement-page { display: flex; flex-direction: column; gap: 20px; max-width: 680px; }
+
 .announcement-form {
-  display: flex; flex-direction: column; gap: 10px; max-width: 420px;
-  margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--ink-15);
+  display: flex; flex-direction: column; gap: 10px; padding: 16px;
+  background: var(--surface); border: 1px solid var(--ink-15); border-radius: 12px;
 }
+.announcement-form h3 { font-size: 14px; font-weight: 600; }
 .announcement-form input[type="text"],
 .announcement-form textarea {
-  padding: 9px 10px; border: 1px solid var(--ink-15); border-radius: 6px;
-  background: var(--surface); color: var(--ink); font-size: 14px;
-  font-family: inherit; resize: vertical;
+  padding: 10px 12px; border: 1px solid var(--ink-15); border-radius: 8px;
+  background: var(--canvas); color: var(--ink); font: inherit; font-size: 14px; resize: vertical;
 }
+.announcement-form input[type="text"] { height: 44px; padding-top: 0; padding-bottom: 0; }
 .announcement-form input[type="text"]:focus,
 .announcement-form textarea:focus { outline: none; border-color: var(--navy); }
-.announcement-form button {
-  align-self: flex-start; padding: 8px 18px; background: var(--navy);
-  color: #fff; font-size: 14px; font-weight: 500;
-}
+.announcement-form button { align-self: flex-start; padding: 10px 20px; background: var(--navy); color: var(--canvas); font-size: 14px; font-weight: 500; }
 .announcement-form button:disabled { background: var(--ink-15); color: var(--ink-60); cursor: not-allowed; }
 
-.announcement-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
-.announcement-list li { padding-bottom: 18px; border-bottom: 1px solid var(--ink-15); }
-.announcement-list h3 { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-.announcement-list p { font-size: 14px; color: var(--ink-60); line-height: 1.5; }
+.announcement-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.announcement-list > li {
+  padding: 16px; background: var(--surface); border: 1px solid var(--ink-15); border-radius: 12px;
+}
+.announcement-list h3 { font-size: 15px; font-weight: 600; }
+.announcement-date { display: block; margin: 2px 0 8px; font-size: 12px; color: var(--ink-60); }
+.announcement-list p { font-size: 14px; color: var(--ink); line-height: 1.55; white-space: pre-wrap; }

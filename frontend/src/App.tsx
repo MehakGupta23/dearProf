@@ -23,6 +23,7 @@ import { Queries } from "./pages/queries/Queries";
 import { TicketDetail } from "./pages/queries/TicketDetail";
 import { Attendance } from "./pages/attendance/Attendance";
 import { Profile } from "./pages/profile/Profile";
+import { EmptyState } from './components/EmptyState';
 
 function App() {
   return (
@@ -37,7 +38,7 @@ function App() {
             <MasterDetailLayout list={<Resources />} basePath="/resources" />
           }
         >
-          <Route index element={<div>Select a course to view resources</div>} />
+          <Route index element={<EmptyState title="Select a course" hint="Pick a course on the left to see its files." />} />
           <Route path=":subjectId" element={<ResourceDetail />} />
         </Route>
         <Route
@@ -49,12 +50,7 @@ function App() {
             />
           }
         >
-          <Route
-            index
-            element={
-              <div>Select a course or General to view announcements</div>
-            }
-          />
+          <Route index element={<EmptyState title="Select a topic" hint="Pick General or a course on the left to read announcements." />} />
           <Route path="general" element={<GeneralAnnouncements />} />
           <Route path=":subjectId" element={<AnnouncementDetail />} />
         </Route>

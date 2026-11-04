@@ -16,13 +16,23 @@ export function Announcements() {
     });
   }, [profile]);
 
-  if (loading) return <p>Loading courses...</p>;
+    if (loading) return <p>Loading courses...</p>;
 
   return (
     <ul className="course-list">
-      <li><NavLink to="/announcements/general">General</NavLink></li>
+      <li>
+        <NavLink to="/announcements/general">
+          <span className="course-code">Department</span>
+          <span className="course-name">General</span>
+        </NavLink>
+      </li>
       {subjects.map((s) => (
-        <li key={s.id}><NavLink to={`/announcements/${s.id}`}>{s.name}</NavLink></li>
+        <li key={s.id}>
+          <NavLink to={`/announcements/${s.id}`}>
+            {s.code && <span className="course-code">{s.code}</span>}
+            <span className="course-name">{s.name}</span>
+          </NavLink>
+        </li>
       ))}
     </ul>
   );

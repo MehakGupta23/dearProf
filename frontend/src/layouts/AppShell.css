@@ -280,5 +280,11 @@
   font-size: 14px;
   color: var(--ink);
   text-decoration: none;
+  transition: filter 0.15s ease;
 }
-.user-dropdown-link:hover { text-decoration: underline; }
+.user-dropdown-link:hover,
+.user-dropdown-link:focus,
+.user-dropdown-link:focus-visible {
+  text-decoration: none;
+  filter: brightness(1.15);
+}

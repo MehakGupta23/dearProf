@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../../lib/auth';
 import { getGeneralAnnouncements, createAnnouncement, type Announcement } from '../../lib/api';
+import { AnnouncementCard } from './AnnouncementCard';
 import './AnnouncementDetail.css';
 
 export function GeneralAnnouncements() {
@@ -13,7 +14,11 @@ export function GeneralAnnouncements() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile?.departmentId) return;
+    if (!profile) return;
+    if (!profile.departmentId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     getGeneralAnnouncements(profile.departmentId).then((data) => {
       setAnnouncements(data);
@@ -42,20 +47,24 @@ export function GeneralAnnouncements() {
   if (loading) return <p>Loading announcements...</p>;
 
   return (
-    <div>
+    <div className="announcement-page">
       {profile?.role === 'professor' && (
         <form onSubmit={handlePost} className="announcement-form">
+          <h3>Post to your department</h3>
           <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <textarea placeholder="Write a department announcement..." value={body} onChange={(e) => setBody(e.target.value)} rows={3} />
+          <textarea placeholder="Write a department announcement..." value={body} onChange={(e) => setBody(e.target.value)} rows={4} />
           {error && <p className="form-error">{error}</p>}
           <button type="submit" disabled={posting}>{posting ? 'Posting...' : 'Post'}</button>
         </form>
       )}
-      <ul className="announcement-list">
-        {announcements.map((a) => (
-          <li key={a.id}><h3>{a.title}</h3><p>{a.body}</p></li>
-        ))}
-      </ul>
+
+      {announcements.length === 0 ? (
+        <p className="empty-note">No announcements yet.</p>
+      ) : (
+        <ul className="announcement-list">
+          {announcements.map((a) => <AnnouncementCard key={a.id} a={a} />)}
+        </ul>
+      )}
     </div>
   );
 }

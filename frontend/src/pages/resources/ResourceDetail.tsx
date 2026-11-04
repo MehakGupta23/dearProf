@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useAuth } from '../../lib/auth';
 import { supabase } from '../../lib/supabase';
+import { formatDate } from '../../lib/format';
 import {
   getResourceDownloadUrl,
   getResourcesBySubject,
@@ -11,12 +12,19 @@ import {
   type Resource,
 } from '../../lib/api';
 
+function fileExtension(path: string): string {
+  const name = path.split('/').pop() ?? '';
+  return name.includes('.') ? (name.split('.').pop() ?? '').toUpperCase().slice(0, 4) : 'FILE';
+}
+
 export function ResourceDetail() {
   const { subjectId } = useParams<{ subjectId: string }>();
   const { profile } = useAuth();
+  const isProfessor = profile?.role === 'professor';
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
+  const [fileKey, setFileKey] = useState(0);
   const [title, setTitle] = useState('');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +63,7 @@ export function ResourceDetail() {
 
       setResources((prev) => [created, ...prev]);
       setFile(null);
+      setFileKey((k) => k + 1); // remounts the file input so the old file name disappears
       setTitle('');
     } catch {
       setError('Upload failed. Try again.');
@@ -80,7 +89,6 @@ export function ResourceDetail() {
     }
   }
 
-  // Save to disk: the signed URL is requested with ?download=1, so the browser downloads it.
   async function handleDownload(resourceId: string) {
     setActionError(null);
     setBusyId(resourceId);
@@ -97,51 +105,57 @@ export function ResourceDetail() {
   if (loading) return <p>Loading files...</p>;
 
   return (
-    <div>
-      <ul className="resource-list">
-        {resources.map((r) => (
-          <li key={r.id} className="resource-item">
-            <span className="resource-title">{r.title}</span>
-            <span className="resource-actions">
-              <button
-                type="button"
-                className="resource-btn"
-                onClick={() => handleView(r.id)}
-                disabled={busyId === r.id}
-              >
-                View
-              </button>
-              <button
-                type="button"
-                className="resource-btn resource-btn-primary"
-                onClick={() => handleDownload(r.id)}
-                disabled={busyId === r.id}
-              >
-                Download
-              </button>
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      {resources.length === 0 && <p className="resource-empty">No files uploaded yet.</p>}
-      {actionError && <p className="form-error">{actionError}</p>}
-
-      {profile?.role === 'professor' && (
-        <form onSubmit={handleUpload} className="upload-form">
-          <input
-            type="text"
-            placeholder="File title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          {error && <p className="form-error">{error}</p>}
-          <button type="submit" disabled={uploading}>
-            {uploading ? 'Uploading...' : 'Upload'}
-          </button>
-        </form>
+    <div className="resource-page">
+      {isProfessor && (
+        <section className="upload-card">
+          <h3>Upload a file</h3>
+          <form onSubmit={handleUpload} className="upload-form">
+            <input type="text" placeholder="File title" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input key={fileKey} type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            {error && <p className="form-error">{error}</p>}
+            <button type="submit" className="upload-btn" disabled={uploading}>
+              {uploading ? 'Uploading...' : 'Upload'}
+            </button>
+          </form>
+        </section>
       )}
+
+      <section>
+        <div className="resource-section-head">
+          <h3>Files</h3>
+          <span className="resource-count">{resources.length}</span>
+        </div>
+
+        {resources.length === 0 ? (
+          <p className="empty-note">No files uploaded yet.</p>
+        ) : (
+          <ul className="resource-list">
+            {resources.map((r) => {
+              const date = formatDate((r as Resource & { createdAt?: string }).createdAt);
+              return (
+                <li key={r.id} className="resource-item">
+                  <span className="file-badge">{fileExtension(r.fileUrl)}</span>
+                  <div className="resource-info">
+                    <span className="resource-title">{r.title}</span>
+                    {date && <span className="resource-meta">{date}</span>}
+                  </div>
+                  <div className="resource-actions">
+                    <button type="button" className="resource-btn" onClick={() => handleView(r.id)} disabled={busyId === r.id}>
+                      View
+                    </button>
+                    {!isProfessor && (
+                      <button type="button" className="resource-btn resource-btn-primary" onClick={() => handleDownload(r.id)} disabled={busyId === r.id}>
+                        Download
+                      </button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {actionError && <p className="form-error">{actionError}</p>}
+      </section>
     </div>
   );
 }
